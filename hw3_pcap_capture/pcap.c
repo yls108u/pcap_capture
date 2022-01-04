@@ -154,7 +154,7 @@ void my_pcap_handler(unsigned char *arg, const struct pcap_pkthdr *packet_header
     // printf("Bytes: %d\n", packet_header->caplen);
 
     ethernet=(eth_hdr *)packet_content;
-    printf("Ethernet Type: %u\n", ethernet->eth_type);
+    printf("Ethernet Type: %u\n", ntohs(ethernet->eth_type));
     printf("MAC source address: %02x-%02x-%02x-%02x-%02x-%02x\n", ethernet->src_mac[0], ethernet->src_mac[1], ethernet->src_mac[2], ethernet->src_mac[3], ethernet->src_mac[4], ethernet->src_mac[5]);
     printf("MAC destination address: %02x-%02x-%02x-%02x-%02x-%02x\n", ethernet->dst_mac[0], ethernet->dst_mac[1], ethernet->dst_mac[2], ethernet->dst_mac[3], ethernet->dst_mac[4], ethernet->dst_mac[5]);
 
@@ -166,14 +166,14 @@ void my_pcap_handler(unsigned char *arg, const struct pcap_pkthdr *packet_header
         if(ip->protocol == IPPROTO_TCP){
             tcp=(tcp_hdr*)(packet_content + eth_len + ip_len);
             printf("Protocol: TCP\n");
-            printf("Source port: %u\n", tcp->sport);
-            printf("Destination port: %u\n", tcp->dport);
+            printf("Source port: %d\n", ntohs(tcp->sport));
+            printf("Destination port: %d\n", ntohs(tcp->dport));
         }
         else if(ip->protocol == IPPROTO_UDP){
             udp=(udp_hdr*)(packet_content + eth_len + ip_len);
             printf("Protocol: UDP\n");
-            printf("Source port: %u\n", udp->sport);
-            printf("Destination port: %u\n", udp->dport);
+            printf("Source port: %u\n", ntohs(udp->sport));
+            printf("Destination port: %u\n", ntohs(udp->dport));
         }
         else if(ip->protocol == IPPROTO_IP){
             printf("Protocol: IP\n");
@@ -186,14 +186,14 @@ void my_pcap_handler(unsigned char *arg, const struct pcap_pkthdr *packet_header
         }
     }
 
-    // printf("Content:\n");
-    // for(int i = 0; i < packet_header->caplen; i++){
-    //     printf("%02x ", packet_content[i]);
-    //     if((i + 1) % 16 == 0){
-    //         printf("\n");
-    //     }
-    // }
-    // printf("\n");
+    printf("Content:\n");
+    for(int i = 0; i < packet_header->caplen; i++){
+        printf("%02x ", packet_content[i]);
+        if((i + 1) % 16 == 0){
+            printf("\n");
+        }
+    }
+    printf("\n");
 
     printf("\n");
 }
